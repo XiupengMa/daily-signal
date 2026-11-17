@@ -1,0 +1,52 @@
+{
+  "name": "daily-signal-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite dev --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "wrangler dev --config dist/server/wrangler.json --local",
+    "deploy": "wrangler deploy --config dist/server/wrangler.json",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "1.31.0",
+    "next": "16.4.6",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "react-server-dom-webpack": "19.2.9",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.37.1",
+    "@cloudflare/workers-types": "4.20260515.1",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.39",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vinext": "1.0.0-beta.5",
+    "vite": "8.3.7",
+    "wrangler": "4.92.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
+  },
+  "overrides": {
+    "miniflare": {
+      "sharp": "0.35.5",
+      "undici": "7.30.2"
+    },
+    "vinext": {
+      "image-size": "2.0.4"
+    },
+    "ws": "8.21.0",
+    "esbuild": "0.28.2",
+    "satori": "0.33.5"
+  }
+}

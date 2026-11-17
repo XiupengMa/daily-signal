@@ -1,0 +1,146 @@
+{
+  "date": "2026-01-02",
+  "newsDate": "2026-01-01",
+  "timezone": "America/Los_Angeles",
+  "title": "Fictional demo — no real news or audio",
+  "titleZh": "虚构示例——不含真实新闻或音频",
+  "description": "A synthetic fixture for local development. No API key is needed.",
+  "descriptionZh": "供本地开发使用的虚构示例，无需API key。",
+  "items": [
+    {
+      "id": "story-1",
+      "title": "Example library releases a demo",
+      "titleZh": "示例软件库发布演示",
+      "category": "Demo",
+      "summary": "Invented content for testing the bilingual player. No real event or organization is described.",
+      "summaryZh": "用于测试双语播放器的虚构内容，不描述真实事件或机构。",
+      "sources": [
+        {
+          "label": "Reserved example domain",
+          "url": "https://example.com/fictional-1"
+        }
+      ]
+    },
+    {
+      "id": "story-2",
+      "title": "Example lab publishes sample data",
+      "titleZh": "示例实验室发布模拟数据",
+      "category": "Demo",
+      "summary": "Invented content for testing the bilingual player. No real event or organization is described.",
+      "summaryZh": "用于测试双语播放器的虚构内容，不描述真实事件或机构。",
+      "sources": [
+        {
+          "label": "Reserved example domain",
+          "url": "https://example.com/fictional-2"
+        }
+      ]
+    },
+    {
+      "id": "story-3",
+      "title": "Example community discusses testing",
+      "titleZh": "示例社区讨论测试方法",
+      "category": "Demo",
+      "summary": "Invented content for testing the bilingual player. No real event or organization is described.",
+      "summaryZh": "用于测试双语播放器的虚构内容，不描述真实事件或机构。",
+      "sources": [
+        {
+          "label": "Reserved example domain",
+          "url": "https://example.com/fictional-3"
+        }
+      ]
+    }
+  ],
+  "takeaways": [
+    "This content is fictional.",
+    "No API calls or media generation occur in demo mode."
+  ],
+  "takeawaysZh": [
+    "所有内容均为虚构。",
+    "演示模式不会调用模型或生成媒体。"
+  ],
+  "coverageNotes": "Synthetic fixture. Media is intentionally absent.",
+  "coverageNotesZh": "虚构测试数据，未附媒体。",
+  "media": {
+    "en": {
+      "duration": 600
+    },
+    "zh": {
+      "duration": 620
+    }
+  },
+  "chapters": [
+    {
+      "id": "intro",
+      "title": "Fictional demo introduction",
+      "titleZh": "虚构示例开场",
+      "start": {
+        "en": 0,
+        "zh": 0
+      },
+      "script": {
+        "en": "This is a fictional demonstration, not a news report.",
+        "zh": "这是虚构的功能演示，不是真实新闻。"
+      }
+    },
+    {
+      "id": "story-1",
+      "storyId": "story-1",
+      "title": "Example library releases a demo",
+      "titleZh": "示例软件库发布演示",
+      "start": {
+        "en": 25,
+        "zh": 30
+      },
+      "script": {
+        "en": "Fictional story 1. This paragraph demonstrates chapter navigation and readable transcripts.",
+        "zh": "虚构示例第1条。本段用于演示章节跳转和文稿阅读。"
+      }
+    },
+    {
+      "id": "story-2",
+      "storyId": "story-2",
+      "title": "Example lab publishes sample data",
+      "titleZh": "示例实验室发布模拟数据",
+      "start": {
+        "en": 200,
+        "zh": 210
+      },
+      "script": {
+        "en": "Fictional story 2. This paragraph demonstrates chapter navigation and readable transcripts.",
+        "zh": "虚构示例第2条。本段用于演示章节跳转和文稿阅读。"
+      }
+    },
+    {
+      "id": "story-3",
+      "storyId": "story-3",
+      "title": "Example community discusses testing",
+      "titleZh": "示例社区讨论测试方法",
+      "start": {
+        "en": 375,
+        "zh": 390
+      },
+      "script": {
+        "en": "Fictional story 3. This paragraph demonstrates chapter navigation and readable transcripts.",
+        "zh": "虚构示例第3条。本段用于演示章节跳转和文稿阅读。"
+      }
+    },
+    {
+      "id": "closing",
+      "title": "Demo takeaways",
+      "titleZh": "示例总结",
+      "start": {
+        "en": 550,
+        "zh": 570
+      },
+      "script": {
+        "en": "End of the fictional demo. Configure your own sources before generating news.",
+        "zh": "虚构演示结束。生成新闻前请配置自己的服务。"
+      }
+    }
+  ],
+  "narration": {
+    "en": "This is a fictional demonstration, not a news report.\n\nFictional story 1. This paragraph demonstrates chapter navigation and readable transcripts.\n\nFictional story 2. This paragraph demonstrates chapter navigation and readable transcripts.\n\nFictional story 3. This paragraph demonstrates chapter navigation and readable transcripts.\n\nEnd of the fictional demo. Configure your own sources before generating news.",
+    "zh": "这是虚构的功能演示，不是真实新闻。\n\n虚构示例第1条。本段用于演示章节跳转和文稿阅读。\n\n虚构示例第2条。本段用于演示章节跳转和文稿阅读。\n\n虚构示例第3条。本段用于演示章节跳转和文稿阅读。\n\n虚构演示结束。生成新闻前请配置自己的服务。"
+  },
+  "updatedAt": "2026-01-02T16:00:00Z"
+}

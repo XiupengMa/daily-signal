@@ -1,0 +1,34 @@
+# Secrets and provider-local state
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+.credentials*
+.openai/
+.sites-*/
+# Runtime data and outputs stay in a private deployment repository
+work/
+recovery/
+audit/
+data/
+outputs/
+*.mp3
+*.mp4
+*.wav
+*.pcm
+*.jpg
+# Dependencies and build state
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+.next/
+.vinext/
+.wrangler/
+*.tsbuildinfo
+.DS_Store
