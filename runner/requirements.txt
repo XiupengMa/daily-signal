@@ -1,7 +1,7 @@
 httpx==0.28.1
 feedparser==6.0.12
 trafilatura==2.0.0
-pydantic==2.12.4
+pydantic==2.14.3
 websocket-client==1.9.0
 Pillow==13.0.0
 
