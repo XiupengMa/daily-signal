@@ -19,6 +19,12 @@ def dates(now=None):
     now = (now or dt.datetime.now(dt.timezone.utc)).astimezone(TZ)
     return now.date().isoformat(), (now.date() - dt.timedelta(days=1)).isoformat()
 
+def scheduled_due(now=None):
+    """Admit the Pacific morning window from the UTC schedule in either season."""
+    now = (now or dt.datetime.now(dt.timezone.utc)).astimezone(TZ)
+    return 8 <= now.hour < 12
+
+
 def save(path, value):
     path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + '.tmp')
@@ -40,10 +46,10 @@ def units(text, lang):
 class Budget:
     """Reserve the full possible request charge BEFORE sending. Unknown outcomes stay charged.
     A successful response replaces the reservation with metered usage. Unknown charges stay reserved.
-    API ceiling $2.40 leaves $0.60/day for hosting/runner (provider bills remain authoritative).
+    API ceiling $5.00 per day; hosting is separate (provider bills remain authoritative).
     """
-    def __init__(self, path, limit=2.40):
-        self.path = Path(path); self.limit = min(float(limit), 2.40)
+    def __init__(self, path, limit=5.00):
+        self.path = Path(path); self.limit = min(float(limit), 5.00)
         self.entries = json.loads(self.path.read_text()) if self.path.exists() else []
     @property
     def spent(self): return sum(e['usd'] for e in self.entries)

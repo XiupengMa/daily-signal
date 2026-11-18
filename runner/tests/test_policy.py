@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from pathlib import Path
-from daily_signal.core import window,dates,score,Budget
+from daily_signal.core import window,dates,score,Budget,scheduled_due,TZ
 from daily_signal.media import chunks,normalize,verified_speech,NarrationMismatch,synthesize
 from daily_signal.sources import canonical,comment_text
 from daily_signal.recovery import restore_editorial
@@ -55,6 +55,23 @@ class PolicyTests(unittest.TestCase):
     def test_comment_fragments_preserve_plain_and_html_text(self):
         self.assertEqual(comment_text('This is useful.'),'This is useful.')
         self.assertEqual(comment_text('<p>Use <a href="https://example.com">the patch</a> &amp; update.</p>'),'Use the patch & update.')
+
+    def test_scheduled_start_uses_pacific_time_across_dst(self):
+        for day,utc_hour in [(dt.date(2026,1,15),16),(dt.date(2026,7,15),15),
+                             (dt.date(2026,3,8),15),(dt.date(2026,11,1),16)]:
+            start=dt.datetime.combine(day,dt.time(utc_hour),dt.timezone.utc)
+            self.assertFalse(scheduled_due(start-dt.timedelta(minutes=1)))
+            self.assertTrue(scheduled_due(start))
+            self.assertTrue(scheduled_due(start+dt.timedelta(hours=3,minutes=59)))
+            self.assertFalse(scheduled_due(start+dt.timedelta(hours=4)))
+
+    def test_utc_cron_has_same_pacific_slots_in_winter_summer_and_dst_transition_days(self):
+        expected=[f'{hour:02d}:{minute:02d}' for hour in range(8,12) for minute in (7,37)]
+        for day in (dt.date(2026,1,15),dt.date(2026,7,15),dt.date(2026,3,8),dt.date(2026,11,1)):
+            slots=[dt.datetime.combine(day,dt.time(hour,minute),dt.timezone.utc)
+                   for hour in range(15,20) for minute in (7,37)]
+            admitted=[now.astimezone(TZ).strftime('%H:%M') for now in slots if scheduled_due(now)]
+            self.assertEqual(admitted,expected,str(day))
 
     def test_previous_day_pacific_not_utc(self):
         self.assertEqual(dates(dt.datetime(2026,11,17,7,30,tzinfo=dt.timezone.utc)),('2026-11-16','2026-11-15'))
