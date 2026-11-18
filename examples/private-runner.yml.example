@@ -2,8 +2,9 @@
 name: Daily Signal
 on:
   schedule:
-    - cron: '0 8 * * *'
-      timezone: America/Los_Angeles
+    # GitHub cron uses UTC. 15:07 = 08:07 PDT; 16:07 = 08:07 PST.
+    # Python admits only 08:00–11:59 Pacific; extra seasonal slots skip safely.
+    - cron: '7,37 15-19 * * *'
   workflow_dispatch:
     inputs:
       resume_run_id:
@@ -47,6 +48,26 @@ jobs:
           run-id: ${{ inputs.resume_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: runner/recovery
+      - name: Locate private media recovery
+        if: inputs.resume_run_id != ''
+        id: recovery_media
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESUME_RUN_ID: ${{ inputs.resume_run_id }}
+        run: |
+          case "$RESUME_RUN_ID" in ''|*[!0-9]*) exit 1;; esac
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RESUME_RUN_ID/artifacts?per_page=100" --jq '.artifacts[] | select(.expired == false) | .name' > artifact-names.txt
+          if grep -Fxq "daily-signal-recovery-$RESUME_RUN_ID" artifact-names.txt; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Restore completed recordings and saved speech segments
+        if: steps.recovery_media.outputs.available == 'true'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: daily-signal-recovery-${{ inputs.resume_run_id }}
+          run-id: ${{ inputs.resume_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: runner/recovery
       - name: Generate, review, narrate, and publish
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -57,7 +78,12 @@ jobs:
           PYTHONUNBUFFERED: "1"
           PRIOR_SPEND_DATE: ${{ vars.PRIOR_SPEND_DATE }}
           PRIOR_SPEND_USD: ${{ vars.PRIOR_SPEND_USD }}
-        run: python -m daily_signal
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            python -m daily_signal --scheduled
+          else
+            python -m daily_signal
+          fi
       - name: Save private audit trail
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -76,5 +102,6 @@ jobs:
             runner/work/**/*.mp3
             runner/work/**/*.mp4
             runner/work/**/*.jpg
+            runner/work/**/chunks/*.wav
           retention-days: 2
           if-no-files-found: ignore

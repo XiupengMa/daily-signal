@@ -12,7 +12,7 @@ Daily Signal combines Hacker News discussion signals with reporting from technol
 - Ranks 70% editorial significance and 30% logarithmic HN engagement. Comment excerpts are a small, nonrepresentative sample.
 - Writes English and Chinese independently, preserving evidence and terminology. A fresh review context scores fidelity, accuracy, terminology, fluency and coverage; all must reach 90/100, with no critical errors, within five drafts.
 - Targets 15–20 minutes **per language**. Validates rendered duration and transcript fidelity before publication.
-- Produces MP3 audio and MP4 caption cards with chapter timestamps, sources and AI-voice labeling.
+- Produces MP3 audio and MP4 caption cards with chapter timestamps, sources and AI-voice labeling. FFmpeg builds the video from the existing audio and local caption images, with no additional model/API calls.
 - Provides chapter navigation, a readable transcript, language switching, 15-second seeking, and playback speeds of 0.5×, 1×, 1.25×, 1.5×, 1.75× and 2×.
 - Reserves estimated API charges before each request, retains uncertain charges, and refuses paid backfills or duplicate daily runs.
 
@@ -53,7 +53,7 @@ Read [deployment](docs/deployment.md), [architecture and limits](docs/architectu
 - **Web:** Cloudflare Workers + R2, with an explicit deployment name and bucket you own.
 - **Generation:** an isolated **private** repository and GitHub-hosted scheduled runner. Copy a reviewed source commit there; do not automatically execute public pull requests or the moving public branch with credentials.
 - **Credentials:** OpenAI API key and a random publisher token exist only in your private secret store. The web Worker stores only the publisher token's SHA-256 hash. No key belongs in the browser.
-- **Budget:** the local API ledger has a $2.40/day ceiling, leaving a planning allowance of $0.60/day for hosting/runner costs. This is not a provider billing cap; pricing, quotas and media traffic must be monitored separately.
+- **Budget:** the local API ledger has a $5.00/day ceiling, entirely for API calls. Hosting/runner costs are separate. This is not a provider billing cap; pricing, quotas and media traffic must be monitored separately.
 
 This public repository has **no production deployment, scheduled generation, production secrets, editorial audit archives, or real news/media dataset**. Forking it does not grant access to anyone else's OpenAI account or deployment.
 

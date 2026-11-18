@@ -43,7 +43,7 @@ Create these settings in the private repository:
 | `BRIEFING_PUBLISH_TOKEN` | Actions Secret | Random token matching the Worker's stored hash |
 | `BRIEFING_SITE_URL` | Actions Variable | Your HTTPS origin, with no path, query or credentials |
 
-Copy `examples/private-runner.yml.example` into `.github/workflows/daily.yml` in that **private** repository. The template checks repository privacy and never runs on a PR event. Its daily schedule is 08:00 `America/Los_Angeles`; GitHub schedules can be delayed. Workflow dispatch starts a current-day run; the shared date claim prevents duplicate generation.
+Copy `examples/private-runner.yml.example` into `.github/workflows/daily.yml` in that **private** repository. The template checks repository privacy and never runs on a PR event. The template uses explicit UTC cron `7,37 15-19 * * *`. Python admits only 08:00–11:59 `America/Los_Angeles`, yielding an 08:07 first attempt and half-hour catch-up opportunities through 11:37 in both PST and PDT. GitHub can delay or drop scheduled events; this is not an exact-time guarantee. Automatic attempts skip any existing daily claim, including failed jobs. Workflow dispatch starts a current-day run; the shared date claim prevents duplicate generation.
 
 Install a CJK font and FFmpeg on any alternative runner. For local manual execution, inject the three settings into the process environment and run `python -m daily_signal` from `runner/`. The `.env.example` is a configuration reference; the application does not automatically load `.env` files. `--collect-only` fetches source material without model calls, but its output must remain private.
 
@@ -53,6 +53,6 @@ Before enabling the first paid run, confirm model availability and price tables 
 
 The template retains private JSON audit data for seven days and failed-run media for two days. Those artifacts contain article excerpts, comments and drafts: never upload them to public CI or releases. Delete them sooner if you do not need recovery.
 
-For an explicitly failed run, dispatch with its numeric Actions run ID in `resume_run_id`; the job downloads the matching private audit and retains prior spend. Aborted/crashed jobs that never reached `failed` need manual reconciliation, not an automatic reset. The example preserves failed media for diagnosis; the current runner automatically restores editorial files, not rendered media.
+For an explicitly failed run, dispatch with its numeric Actions run ID in `resume_run_id`; the job downloads the matching private audit and retains prior spend. Aborted/crashed jobs that never reached `failed` need manual reconciliation, not an automatic reset. The job restores reviewed editorial files, completed recordings and verified speech chunks from its private audit/media artifacts. It validates each recovered recording before reuse, so completed speech does not require another model call. Older runs that never saved per-segment audio cannot recover those missing bytes. All prior spending still counts against the $5 daily API cap; hosting costs are separate.
 
 Review a fixed new upstream revision, test it without credentials, and import only approved changes into the private copy. Production keys remain in the private repository throughout. Rotate secrets promptly if exposure is suspected; a clean Git history alone does not revoke a leaked key.

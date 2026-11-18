@@ -5,10 +5,10 @@ import os
 import sys
 import uuid
 from pathlib import Path
-from .core import Budget,dates,save,LANGUAGES,digest
+from .core import Budget,dates,save,LANGUAGES,digest,scheduled_due
 from .sources import collect
 from .editor import Editor,MAX_DRAFTS
-from .recovery import restore_editorial
+from .recovery import restore_editorial,restore_media
 from .media import render
 from .publish import Publisher
 
@@ -16,12 +16,15 @@ from .publish import Publisher
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--collect-only',action='store_true')
+    p.add_argument('--scheduled',action='store_true',help='Safe automatic catch-up; never resume an existing claim')
     p.add_argument('--news-date')
     p.add_argument('--work',type=Path,default=Path('work'))
     args=p.parse_args(); date,day=dates()
     if args.news_date:
         if not args.collect_only: raise RuntimeError('Paid backfills are disabled to preserve daily cap')
         day=args.news_date
+    if args.scheduled and not scheduled_due():
+        print('Outside 08:00–12:00 Pacific; scheduled generation skipped');return
     folder=args.work/date;folder.mkdir(parents=True,exist_ok=True)
     if args.collect_only:
         result=collect(day);save(folder/'sources.json',result)
@@ -33,6 +36,11 @@ def main():
     if existing.status_code==200 and existing.json().get('quality',{}).get('policy')=='source-first-v1':
         print('Quality-gated edition already published; no paid work');return
     if existing.status_code not in (200,404): raise RuntimeError('Cannot verify publication state')
+    if args.scheduled:
+        job=publisher.get('/api/jobs?date='+date)
+        job.raise_for_status()
+        if job.json().get('state') != 'not_started':
+            print('Today already has a job; automatic catch-up will not retry paid work');return
     prior=publisher.claim(date,run_id,os.environ.get('RESUME_RUN_ID') or None)
     budget=Budget(folder/'cost-ledger.json')
     external=float(os.environ.get('PRIOR_SPEND_USD','0')) if os.environ.get('PRIOR_SPEND_DATE')==date else 0
@@ -42,7 +50,9 @@ def main():
     try:
         recovered=False
         if os.environ.get('RESUME_RUN_ID') and os.environ.get('RECOVERY_DIR'):
-            recovered=restore_editorial(Path(os.environ['RECOVERY_DIR'])/date,folder,day)
+            recovery_source=Path(os.environ['RECOVERY_DIR'])/date
+            recovered=restore_editorial(recovery_source,folder,day)
+            if recovered:restore_media(recovery_source,folder)
         print(('Restoring reviewed original sources for ' if recovered else 'Collecting original sources for ')+day,flush=True)
         evidence=json.loads((folder/'sources.json').read_text()) if recovered else collect(day)
         save(folder/'sources.json',evidence)
